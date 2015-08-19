@@ -43,6 +43,7 @@
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^2.9.34",
     "body-parser": "^1.13.3",
+    "cytoscape": "^2.4.6",
     "express": "^4.13.3",
     "jwt-simple": "^0.3.0",
     "mongodb": "^2.0.40",

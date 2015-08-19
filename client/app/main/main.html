@@ -2,7 +2,7 @@
 <div class='container' data-ng-controller="MainCtrl"> 
 
   <h1> Hello, {{user}}!</h1>
-
+  <div cyto-graph id="cy"></div>
   <table ng-table class="table">
       <tr ng-repeat="user in network | orderBy:'username'">
           <td class="username-col" data-title="'Username'">{{user.username}}</td>

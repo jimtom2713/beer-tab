@@ -7,7 +7,7 @@ app.config(function ($stateProvider, $httpProvider, $urlRouterProvider) {
   $stateProvider
     .state('main', {
       url: '/main',
-      templateUrl: 'app/main/main.html',
+      templateUrl: 'app/main/main-two.html',
       controller: 'MainCtrl'
     })
     .state('login', {
