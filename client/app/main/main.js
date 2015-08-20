@@ -100,12 +100,7 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
   function($window, $timeout, cytoService){
     return {
       restrict: 'ACE',
-      scope: false /*{
-        data: {
-          'username': '=user',
-          'network': '=network'
-        }
-      }*/,
+      scope: false,
       link: function(scope, ele, attrs){
         var unwatch = scope.$watchCollection('network', function(newVal, oldVal){
           if(newVal){
@@ -113,6 +108,18 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
             unwatch();
           }
         });
+    /*    var resizse = scope.$watch(function(){
+               return $window.innerWidth;
+            }, function(value) {
+               console.log("window -----> ",value);
+           });*/
+        // console.log($window);
+     /*   var size = scope.$watch('$window.innerHeight', function(newVal, oldVal){
+          if(newVal){
+            console.log('we resized');
+          }
+        })*/
+        // var resize = 
         //start cytoscape visualization
         function init(){
           cytoService.cytoscape().then(function(cytoscape){
@@ -135,12 +142,12 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
                     beerDebt: user.network[i].tab
                   }
                 });
-                g.edges.push({
+      /*          g.edges.push({
                   data:{
                     source: user.user,
                     target: user.network[i].username
                   }
-                })
+                })*/
               }
               return g;
             };
@@ -154,14 +161,14 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
                     'content': 'data(name)',
                     'text-valign': 'center',
                     'color': 'black',
-                    'height': 80,
-                    'width': 80,
+                    'height': 70,
+                    'width': 70,
                     'background-fit': 'cover',
                     'border-color': '#162FCE',
                     'border-width': 9,
                     'border-opacity': 0.5,
                     // 'background-image': 'http://www.charbase.com/images/glyph/127866'
-                    'background-image': 'beerMug.png'
+                    'background-image': 'assets/beerMug.png'
                   })
                 .selector('.owed')
                   .css({
@@ -183,13 +190,28 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
                   }),
               
               elements: createGraph(scope),
+   /*             layout: {
+                  name: 'grid',
+                  padding: 30,
+                  avoidOverlap: true,
+                  animate: true,
+                  animationDuration: 500
+                }*/
                 layout: {
+                  name: 'random',
+                  fit: true,
+                  padding: 30,
+                  boundingBox: {100,100,100,100}
+                  animate: true,
+                  animationDuration: 500
+                }
+           /*     layout: {
                   name: "circle",
                   fit: true,
                   padding: 30,
                   avoidOverlap: true,
                   radius: 50
-                }
+                }*/
             }); // cy init
 
             cy.ready(function(){
@@ -209,6 +231,28 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
                 // stuff.toggleClass('owe');
               })
             })
+           cy.on('click', 'node', function(){
+            console.log('hi again');
+            var nodes = this;
+            var tapped = nodes;
+            var Beer = [];
+            for(;;){
+              var connectedEdges = nodes.connectedEdges(function(){
+                return !this.target().anySame( nodes );
+              });
+              
+              var connectedNodes = connectedEdges.targets();
+              
+              Array.prototype.push.apply( Beer, connectedNodes );
+              
+              nodes = connectedNodes;
+              // console.log("NODES------->",nodes);
+              if( nodes.empty() ){ break; }
+            }
+            // console.log("BEER --------->",Beer);
+
+
+           });
           })  
         }
         //end cytoscape visualization code
