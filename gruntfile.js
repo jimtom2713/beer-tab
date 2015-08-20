@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     concat: {     // Join .js files
       src: {
         src: 'client/app/**/*.js',
-        dest: 'client/dist/src.js',
+        dest: 'client/dist/src.js'
       },
       lib: {
         src: [
@@ -38,10 +38,9 @@ module.exports = function(grunt) {
           'bower_components/ng-table/dist/ng-table.min.js',
           'bower_components/angular-jwt/dist/angular-jwt.min.js',
           'bower_components/angular-ui-router/release/angular-ui-router.min.js',
-          'bower_components/bootstrap/dist/js/bootstrap.min.js',
-          'bower_components/cytoscape/dist/cytoscape.min.js'
+          'bower_components/bootstrap/dist/js/bootstrap.min.js'
         ],
-        dest: 'client/dist/lib.min.js',
+        dest: 'client/dist/lib.min.js'
       }
     },
     //-----------------------------------------------------

@@ -190,28 +190,28 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
                   }),
               
               elements: createGraph(scope),
-   /*             layout: {
+                /*layout: {
                   name: 'grid',
                   padding: 30,
                   avoidOverlap: true,
                   animate: true,
                   animationDuration: 500
                 }*/
-                layout: {
+             /*   layout: {
                   name: 'random',
                   fit: true,
                   padding: 30,
-                  boundingBox: {100,100,100,100}
+                  // boundingBox: {100,100,100,100}
                   animate: true,
                   animationDuration: 500
-                }
-           /*     layout: {
+                }*/
+                layout: {
                   name: "circle",
                   fit: true,
                   padding: 30,
                   avoidOverlap: true,
                   radius: 50
-                }*/
+                }
             }); // cy init
 
             cy.ready(function(){
