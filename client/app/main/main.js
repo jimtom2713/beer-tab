@@ -7,10 +7,15 @@ main.controller('MainCtrl', function ($scope, $window, beerPmt, jwtHelper, AuthS
   // Decode token (this uses angular-jwt. notice jwtHelper)
   $scope.decodedJwt = $scope.jwt && jwtHelper.decodeToken($scope.jwt);
   // Object used to contain user's beer network
-  getTable.getTable($scope.user)
-    .then(function (derp) {
-      $scope.network = util.toArr(derp);
-    });
+
+  $scope.getTable = function(){
+    console.log('getting network');
+    getTable.getTable($scope.user)
+      .then(function (derp) {
+        $scope.network = util.toArr(derp);
+      })
+  }
+
 
   // $scope.network =  argle || $scope.decodedJwt.network;
   // Pull username from token to display on main page
@@ -102,125 +107,111 @@ main.directive('cytoGraph', ['$window', '$timeout', 'cytoService',
         }
       }*/,
       link: function(scope, ele, attrs){
-        cytoService.cytoscape().then(function(cytoscape){
-          // console.log("scope---------->", scope.user);
-          // console.log("network--------->", scope.network);
-          // var user = {
-          //   username: 'mack',
-          //   password: 'argleBargle1',
-          //   network: {'trevor': -3, 'kyle': 0, 'jimmy': 1}
-          // };
-          // console.log("USER------> ", user);
-          var createGraph = function(user){
-            var g = {};
-            g.nodes = [];
-            g.edges = [];
-            g.nodes.push({
-              data:{
-                id: user.user,
-                name: user.user
-              }
-            });
-            for(var i=0; i< user.network.length; i++){
-              console.log("network: ",user.network[i]);
+        var unwatch = scope.$watchCollection('network', function(newVal, oldVal){
+          if(newVal){
+            init();
+            unwatch();
+          }
+        });
+        //start cytoscape visualization
+        function init(){
+          cytoService.cytoscape().then(function(cytoscape){
+            var createGraph = function(user){
+              var g = {};
+              g.nodes = [];
+              g.edges = [];
               g.nodes.push({
                 data:{
-                  id: user.network[i].username,
-                  name: user.network[i].username + ":" + user.network[i].tab,
-                  beerDebt: user.network[i].tab
+                  id: user.user,
+                  name: user.user
                 }
               });
-              g.edges.push({
-                data:{
-                  source: user.user,
-                  target: user.network[i].username
-                }
-              })
-            }
-      /*      for(var key in user.network){
-              g.nodes.push({
-                data:{
-                  id: key,
-                  name: key + ': ' + user.network[key],
-                  beerDebt: user.network[key]
-                }
-              });
-              g.edges.push({
-                data:{
-                  source: user.username,
-                  target: key
-                  // beerStatus: user.network[key] < 0 ? 'Buy a beer for' : 'Get a beer from'
-                }
-              })
-            }*/
-            return g;
-          };
-            
-          var cy = cytoscape({
-            container: document.getElementById('cy'),
-            
-            style: cytoscape.stylesheet()
-              .selector('node')
-                .css({
-                  'content': 'data(name)',
-                  'text-valign': 'center',
-                  'color': 'black',
-                  'height': 80,
-                  'width': 80,
-                  'background-fit': 'cover',
-                  'border-color': '#162FCE',
-                  'border-width': 9,
-                  'border-opacity': 0.5,
-                  // 'background-image': 'http://www.charbase.com/images/glyph/127866'
-                  'background-image': 'beerMug.png'
+              for(var i=0; i< user.network.length; i++){
+                console.log("network: ",user.network[i]);
+                g.nodes.push({
+                  data:{
+                    id: user.network[i].username,
+                    name: user.network[i].username + ":" + user.network[i].tab,
+                    beerDebt: user.network[i].tab
+                  }
+                });
+                g.edges.push({
+                  data:{
+                    source: user.user,
+                    target: user.network[i].username
+                  }
                 })
-              .selector('.owed')
-                .css({
-                  'border-color': 'red'
-                })
-              .selector('.owe')
-                .css({
-                  // 'border-width': 9
-                  'border-color': 'green'
-                })
-              .selector('edge')
-                .css({
-                  'width': 6,
-                  'target-arrow-shape': 'triangle',
-                  'line-color': '#162FCE',
-                  'target-arrow-color': '#162FCE',
-                  'content': 'data(beerStatus)',
-                  'font-size': 8
-                }),
-            
-            elements: createGraph(scope),
-              layout: {
-                name: "circle",
-                fit: true,
-                padding: 30,
-                avoidOverlap: true,
-                radius: 50
               }
-          }); // cy init
+              return g;
+            };
+              
+            var cy = cytoscape({
+              container: document.getElementById('cy'),
+              
+              style: cytoscape.stylesheet()
+                .selector('node')
+                  .css({
+                    'content': 'data(name)',
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'height': 80,
+                    'width': 80,
+                    'background-fit': 'cover',
+                    'border-color': '#162FCE',
+                    'border-width': 9,
+                    'border-opacity': 0.5,
+                    // 'background-image': 'http://www.charbase.com/images/glyph/127866'
+                    'background-image': 'beerMug.png'
+                  })
+                .selector('.owed')
+                  .css({
+                    'border-color': 'red'
+                  })
+                .selector('.owe')
+                  .css({
+                    // 'border-width': 9
+                    'border-color': 'green'
+                  })
+                .selector('edge')
+                  .css({
+                    'width': 6,
+                    'target-arrow-shape': 'triangle',
+                    'line-color': '#162FCE',
+                    'target-arrow-color': '#162FCE',
+                    'content': 'data(beerStatus)',
+                    'font-size': 8
+                  }),
+              
+              elements: createGraph(scope),
+                layout: {
+                  name: "circle",
+                  fit: true,
+                  padding: 30,
+                  avoidOverlap: true,
+                  radius: 50
+                }
+            }); // cy init
 
-          cy.ready(function(){
-            var nodes = this;
-            // console.log(nodes.elements());
-            nodes.elements().forEach(function(element){
-              // console.log(element._private.group);
-              if(element._private.group === "nodes"  && element._private.data.beerDebt !== undefined){
-                // console.log(element._private);
-                // element.addClass('owed');
-                if(element._private.data.beerDebt > 0){
-                  element.addClass('owed');
-                }else if(element._private.data.beerDebt <= 0){
-                  element.addClass('owe');
+            cy.ready(function(){
+              var nodes = this;
+              // console.log(nodes.elements());
+              nodes.elements().forEach(function(element){
+                // console.log(element._private.group);
+                if(element._private.group === "nodes"  && element._private.data.beerDebt !== undefined){
+                  // console.log(element._private);
+                  // element.addClass('owed');
+                  if(element._private.data.beerDebt > 0){
+                    element.addClass('owed');
+                  }else if(element._private.data.beerDebt <= 0){
+                    element.addClass('owe');
+                  }
                 }
-              }
-              // stuff.toggleClass('owe');
+                // stuff.toggleClass('owe');
+              })
             })
-          })
-        })
+          })  
+        }
+        //end cytoscape visualization code
       }
     }
   }])

@@ -22,7 +22,7 @@
 }
 
 </style>
-<div data-ng-controller="MainCtrl">
+<div data-ng-controller="MainCtrl" ng-init="getTable()">
 
   <!-- <link href="style.css" rel="stylesheet" /> -->
   <div cyto-graph id="cy">{{network}}</div>
